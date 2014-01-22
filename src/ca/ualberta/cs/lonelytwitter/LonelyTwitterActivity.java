@@ -1,14 +1,17 @@
 package ca.ualberta.cs.lonelytwitter;
 
 import java.io.BufferedReader;
-import com.google.gson.*;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
+
+import com.google.gson.Gson;
+
 
 import android.app.Activity;
 import android.content.Context;
@@ -31,7 +34,6 @@ public class LonelyTwitterActivity extends Activity {
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.main);
-
 		bodyText = (EditText) findViewById(R.id.body);
 		Button saveButton = (Button) findViewById(R.id.save);
 		oldTweetsList = (ListView) findViewById(R.id.oldTweetsList);
@@ -43,7 +45,10 @@ public class LonelyTwitterActivity extends Activity {
 				String text = bodyText.getText().toString();
 				LonelyTweetModel tweet = new LonelyTweetModel(text, new Date(System.currentTimeMillis()));
 				saveInFile(tweet);
-				adapter.notifyDataSetChanged();
+				String string = tweet.getTimestamp().toString()+" | "+tweet.getText();
+				adapter.add(string);
+				bodyText.setText("");
+				//adapter.notifyDataSetChanged();
 				//finish();
 
 			}
@@ -54,8 +59,10 @@ public class LonelyTwitterActivity extends Activity {
 	protected void onStart() {
 		// TODO Auto-generated method stub
 		super.onStart();
+		ArrayList<String> lst = new ArrayList<String>();
 		String[] tweets = loadFromFile();
-		adapter = new ArrayAdapter<String>(this, R.layout.list_item, tweets);
+		lst.addAll(Arrays.asList(tweets));
+		adapter = new ArrayAdapter<String>(this, R.layout.list_item, lst);
 		oldTweetsList.setAdapter(adapter);
 	}
 
@@ -80,6 +87,7 @@ public class LonelyTwitterActivity extends Activity {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		
 		return tweets.toArray(new String[tweets.size()]);
 	}
 	
@@ -88,7 +96,7 @@ public class LonelyTwitterActivity extends Activity {
 		try {
 			FileOutputStream fos = openFileOutput(FILENAME,
 					Context.MODE_APPEND);
-			fos.write(gson.toJson(tweet).getBytes());
+			fos.write((gson.toJson(tweet)+"\n").getBytes());
 			fos.close();
 		} catch (FileNotFoundException e) {
 			// TODO Auto-generated catch block
