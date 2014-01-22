@@ -40,9 +40,9 @@ public class LonelyTwitterActivity extends Activity {
 			public void onClick(View v) {
 				setResult(RESULT_OK);
 				String text = bodyText.getText().toString();
-				LonelyTweetModel tweet = new NormalTweetModel()
-				saveInFile(text, new Date(System.currentTimeMillis()));
-				finish();
+				LonelyTweetModel tweet = new LonelyTweetModel(text, new Date(System.currentTimeMillis()));
+				saveInFile(tweet);
+				//finish();
 
 			}
 		});
@@ -79,12 +79,12 @@ public class LonelyTwitterActivity extends Activity {
 		return tweets.toArray(new String[tweets.size()]);
 	}
 	
-	private void saveInFile(String text, Date date) {
+	private void saveInFile(LonelyTweetModel tweet) {
+		Gson gson = new Gson();
 		try {
 			FileOutputStream fos = openFileOutput(FILENAME,
 					Context.MODE_APPEND);
-			fos.write(new String(date.toString() + " | " + text)
-					.getBytes());
+			fos.write(gson.toJson(tweet).getBytes());
 			fos.close();
 		} catch (FileNotFoundException e) {
 			// TODO Auto-generated catch block
