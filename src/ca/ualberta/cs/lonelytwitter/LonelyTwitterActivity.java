@@ -1,6 +1,7 @@
 package ca.ualberta.cs.lonelytwitter;
 
 import java.io.BufferedReader;
+import com.google.gson.*;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -39,6 +40,7 @@ public class LonelyTwitterActivity extends Activity {
 			public void onClick(View v) {
 				setResult(RESULT_OK);
 				String text = bodyText.getText().toString();
+				LonelyTweetModel tweet = new NormalTweetModel()
 				saveInFile(text, new Date(System.currentTimeMillis()));
 				finish();
 
